@@ -5,6 +5,7 @@ import { TABLE_HEADERS } from "./constants";
 import User from "../../compoenents/Users/User";
 import { fetchUsers, sortUsersData } from "./util";
 import axios from "axios";
+import { Loader } from "../../compoenents/Loader/Loader";
 
 const UsersPage = () => {
   const [loading, setLoading] = useState(false);
@@ -161,7 +162,7 @@ const UsersPage = () => {
         </div>
         <div className={styles.body}>
           {loading ? (
-            <div>Loading...............</div>
+            <p>Loading..... It's take some time... Please wait...</p>
           ) : (
             paginatedUsers?.length > 0 &&
             paginatedUsers?.map((user, index) => {

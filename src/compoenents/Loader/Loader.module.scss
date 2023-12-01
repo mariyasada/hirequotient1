@@ -1,0 +1,31 @@
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.container {
+  position: fixed;
+  .loadingspinner {
+    display: flex;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border: 10px solid rgb(219, 214, 214);
+    border-top: 10px solid black; /* Black */
+    border-radius: 50%;
+    animation: spinner 1.5s linear infinite;
+  }
+}
+@media screen and (max-width: 900px) {
+  .loading-spinner {
+    min-width: 40px;
+    width: 40px;
+    height: 40px;
+    border: 10px solid var(--light-stone);
+    border-top: 10px solid black;
+  }
+}
