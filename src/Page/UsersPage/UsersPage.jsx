@@ -18,6 +18,7 @@ const UsersPage = () => {
   const [selectedRows, setSelectedRows] = useState({
     data: [],
     isSelected: false,
+    deleted: false,
   });
   const [isEditing, setIsEditing] = useState(null);
   const [userDetail, setUserDetail] = useState({
@@ -124,6 +125,7 @@ const UsersPage = () => {
     });
 
     setCurrentPage(1);
+    setSelectedRows((prev) => ({ ...prev, deleted: true }));
   };
 
   return (
@@ -190,9 +192,11 @@ const UsersPage = () => {
       </div>
 
       <div className={styles.pagination}>
-        <div
-          className={styles.selectedRowInfo}
-        >{`${selectedRows.data?.length} of 46 row(s) selected`}</div>
+        <div className={styles.selectedRowInfo}>
+          {selectedRows.deleted
+            ? `${selectedRows.data?.length} of 46 row(s) deleted`
+            : `${selectedRows.data?.length} of 46 row(s) selected`}
+        </div>
         <div className={styles.paginationNumbers}>
           <div className={styles.pageNumberDetail}>
             <span>{`Page ${currentPage} of ${totalPages} `}</span>
