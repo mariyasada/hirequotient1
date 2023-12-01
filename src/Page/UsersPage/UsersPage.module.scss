@@ -1,0 +1,120 @@
+.container {
+  width: 97%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+
+  .searchbarcontainer {
+    display: flex;
+    width: 95%;
+    justify-content: space-between;
+    input {
+      padding: 10px;
+      height: 20px;
+      width: 300px;
+      border-radius: 15px;
+      border: 1px solid gray;
+      outline: none;
+    }
+    .iconcontainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      background-color: rgb(249, 178, 178);
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+  }
+  .table {
+    width: 95%;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid gray;
+    .header {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 5px;
+      transition: 0.25s ease-in-out;
+
+      > div {
+        text-transform: capitalize;
+        color: gray;
+        text-align: left;
+        padding: 0 5px;
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+      .checkboxdiv {
+        cursor: pointer;
+      }
+
+      .name {
+        width: 220px;
+      }
+      .email {
+        width: 240px;
+      }
+      .role {
+        width: 150px;
+      }
+      .actions {
+        width: 140px;
+      }
+    }
+    .body {
+      margin-top: 10px;
+      gap: 10px;
+      display: flex;
+      border-radius: 10px;
+      background-color: white;
+      padding: 10px 10px;
+      flex-direction: column;
+    }
+  }
+  .pagination {
+    display: flex;
+    width: 95%;
+    justify-content: space-between;
+    .selectedRowInfo {
+      color: gray;
+    }
+
+    .paginationNumbers {
+      display: flex;
+      gap: 10px;
+
+      .pageNumberDetail {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+      .btnPaginate {
+        background-color: whitesmoke;
+        color: black;
+        outline: none;
+        border: none;
+        border-radius: 4px;
+        margin: 0.3rem 0.5rem;
+        width: 2rem;
+        padding: 0.3rem 0.3rem;
+        font-size: medium;
+
+        cursor: pointer;
+      }
+      .secondaryBtn {
+        background-color: gray;
+        color: white;
+        font-weight: 600;
+      }
+    }
+  }
+}
