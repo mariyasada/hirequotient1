@@ -139,7 +139,7 @@ const UsersPage = () => {
           className={styles.iconcontainer}
           onClick={() => multipleRowDeleteHandler(selectedRows)}
         >
-          <FaTrash />
+          <FaTrash title="Delete selected rows" />
         </div>
       </div>
 
