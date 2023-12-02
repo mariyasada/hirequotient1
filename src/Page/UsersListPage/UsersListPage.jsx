@@ -1,84 +1,61 @@
 import React, { useEffect, useState } from "react";
-import styles from "./UsersPage.module.scss";
+import styles from "./UsersListPage.module.scss";
 import { FaBackward, FaForward, FaTrash } from "react-icons/fa";
 import { TABLE_HEADERS } from "./constants";
 import User from "../../compoenents/Users/User";
-import { fetchUsers, sortUsersData } from "./util";
-import axios from "axios";
-import { Loader } from "../../compoenents/Loader/Loader";
+import { useUsers } from "../../context/UserContext";
 
-const UsersPage = () => {
-  const [loading, setLoading] = useState(false);
-  const [usersData, setUsersData] = useState([]);
+const UsersListPage = () => {
+  const {
+    userList,
+    setUserList,
+    isLoading,
+    setIsLoading,
+    filteredData,
+    state,
+    selectedRows,
+    setSelectedRows,
+    dispatch,
+  } = useUsers();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const usersPerPage = 10;
-  const [searchValue, setSearchValue] = useState("");
-  const [originalData, setOriginalData] = useState([]);
-  const [selectedRows, setSelectedRows] = useState({
-    data: [],
-    isSelected: false,
-    deleted: false,
-  });
   const [isEditing, setIsEditing] = useState(null);
-  const [userDetail, setUserDetail] = useState({
-    name: "",
-    role: "",
-    email: "",
-  });
+  const [searchValue, setSearchValue] = useState("");
+  const usersPerPage = 10;
+  const [singleUserDetail, setSingleUserDetail] = useState({});
 
+  //   pagination logic
   useEffect(() => {
-    setLoading(true);
-    (async () => {
-      try {
-        const { data } = await axios.get(
-          "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json"
-        );
-        setLoading(false);
-        setUsersData(data || []);
-        setOriginalData(data);
-      } catch (err) {
-        console.error(err, "something wong,can't get videos");
-      }
-    })();
-  }, []);
-
-  //   pagination
-  useEffect(() => {
-    if (usersData.length > 0) {
-      setTotalPages(Math.ceil(usersData.length / usersPerPage));
+    if (filteredData.length > 0) {
+      setTotalPages(Math.ceil(filteredData.length / usersPerPage));
     }
-  }, [usersData]);
+  }, [filteredData]);
 
   const endIndex = usersPerPage * currentPage;
   const startIndex = endIndex - usersPerPage;
   const paginatedUsers =
-    usersData?.length > 0 && usersData?.slice(startIndex, endIndex);
+    filteredData?.length > 0 && filteredData?.slice(startIndex, endIndex);
 
+  //Search Data Logic
   useEffect(() => {
-    if (!searchValue) setSearchValue("");
-  }, [searchValue]);
-
-  useEffect(() => {
-    if (searchValue === "") return setUsersData(originalData);
     const handleKeyPress = (e) => {
-      if (e.key === "Enter") {
-        const filteredData = sortUsersData(usersData, searchValue);
-        sortUsersData(usersData, searchValue);
-        setUsersData(filteredData);
-        setCurrentPage(1);
+      if (e.key === "Enter" || e.key === "Backspace") {
+        dispatch({ type: "SEARCH_QUERY", payload: searchValue });
       }
     };
-
     window.addEventListener("keypress", handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress);
 
     return () => {
       window.removeEventListener("keypress", handleKeyPress);
+      window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [searchValue, usersData]);
+  }, [searchValue]);
 
+  // select and disselect multiple rows
   const selectAllRowsHandler = (e) => {
-    const allRowsOnPage = usersData.slice(
+    const allRowsOnPage = filteredData.slice(
       (currentPage - 1) * usersPerPage,
       currentPage * usersPerPage
     );
@@ -87,6 +64,7 @@ const UsersPage = () => {
     if (isSelected) {
       setSelectedRows((prev) => ({ ...prev, isSelected: false, data: [] }));
     } else {
+      // we store all the ids of current page
       setSelectedRows((prev) => ({
         ...prev,
         isSelected: true,
@@ -94,9 +72,28 @@ const UsersPage = () => {
       }));
     }
   };
+
+  //when we change the page it unchecked the header's checkbox
   useEffect(() => {
-    setSelectedRows((prev) => ({ ...prev, isSelected: false }));
+    if (selectedRows.isSelected) {
+      const allRows = filteredData.slice(
+        (currentPage - 1) * usersPerPage,
+        currentPage * usersPerPage
+      );
+      setSelectedRows((prev) => ({
+        ...prev,
+        data: allRows.map((user) => user.id),
+      }));
+    }
   }, [currentPage]);
+
+  const multipleRowDeleteHandler = (selectedRows) => {
+    const newUpdateData = filteredData?.filter(
+      (user) => !selectedRows.data.includes(user?.id)
+    );
+    setUserList(newUpdateData);
+    setSelectedRows((prev) => ({ ...prev, isSelected: false, data: [] }));
+  };
 
   const handleRowCheckboxChange = (rowId) => {
     setSelectedRows((prev) => ({
@@ -107,41 +104,32 @@ const UsersPage = () => {
     }));
   };
 
-  const multipleRowDeleteHandler = (selectedRows) => {
-    const newUpdateData = usersData?.filter(
-      (user) => !selectedRows.data.includes(user?.id)
-    );
-    // if search value is empty string then original data used
-    // Update original data
-    setOriginalData(newUpdateData);
-
-    // Update usersData based on searchValue
-    setUsersData((prev) => {
-      const filteredData =
-        searchValue.trim() === ""
-          ? newUpdateData
-          : sortUsersData(newUpdateData, searchValue);
-      return filteredData;
-    });
-
-    setCurrentPage(1);
-    setSelectedRows((prev) => ({ ...prev, deleted: true }));
-  };
-
   return (
     <div className={styles.container}>
+      <h3>UserList Page</h3>
       <div className={styles.searchbarcontainer}>
-        <input
-          type="text"
-          className={styles.searchbar}
-          placeholder="Search"
-          onChange={(e) => setSearchValue(e.target.value)}
-        />
+        <div className={styles.searchWithClear}>
+          <input
+            type="text"
+            className={styles.searchIcon}
+            placeholder="Search"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+          />
+          <div
+            onClick={() => {
+              setSearchValue("");
+              dispatch({ type: "CLEAR_SEARCH", payload: "" });
+            }}
+          >
+            Clear
+          </div>
+        </div>
         <div
-          className={styles.iconcontainer}
+          className={styles.deleteRows}
           onClick={() => multipleRowDeleteHandler(selectedRows)}
         >
-          <FaTrash title="Delete selected rows" />
+          Delete Selected
         </div>
       </div>
 
@@ -152,7 +140,6 @@ const UsersPage = () => {
               type="checkbox"
               checked={selectedRows.isSelected}
               onChange={(e) => selectAllRowsHandler(e)}
-              style={{ cursor: "pointer" }}
             />
           </div>
 
@@ -163,7 +150,7 @@ const UsersPage = () => {
           ))}
         </div>
         <div className={styles.body}>
-          {loading ? (
+          {isLoading ? (
             <p>Loading..... It's take some time... Please wait...</p>
           ) : (
             paginatedUsers?.length > 0 &&
@@ -172,18 +159,15 @@ const UsersPage = () => {
                 <User
                   user={user}
                   userNo={index + 1}
-                  totalUsers={usersData?.length}
                   key={user.id}
                   selectedRows={selectedRows.data}
-                  handleRowChangeHandler={handleRowCheckboxChange}
-                  setOriginalData={setOriginalData}
-                  setUsersData={setUsersData}
-                  originalData={originalData}
+                  setUserList={setUserList}
+                  userList={userList}
+                  RowCheckboxChangeHandler={handleRowCheckboxChange}
                   isEditing={isEditing}
                   setIsEditing={setIsEditing}
-                  setUserDetail={setUserDetail}
-                  userDetail={userDetail}
-                  usersData={usersData}
+                  singleUser={singleUserDetail}
+                  setSingleUser={setSingleUserDetail}
                 />
               );
             })
@@ -192,10 +176,11 @@ const UsersPage = () => {
       </div>
 
       <div className={styles.pagination}>
-        <div className={styles.selectedRowInfo}>
-          {selectedRows.deleted
-            ? `${selectedRows.data?.length} of 46 row(s) deleted`
-            : `${selectedRows.data?.length} of 46 row(s) selected`}
+        <div
+          className={styles.selectedRowInfo}
+          onClick={() => multipleRowDeleteHandler(selectedRows)}
+        >
+          {`${selectedRows.data?.length} of ${userList?.length} row(s) selected`}
         </div>
         <div className={styles.paginationNumbers}>
           <div className={styles.pageNumberDetail}>
@@ -204,7 +189,7 @@ const UsersPage = () => {
           {totalPages > 1 ? (
             <div>
               <button
-                className={`${styles.btnPaginate} `}
+                className={`${styles.btnPaginate} ${styles.previosPage} `}
                 style={{
                   cursor: currentPage === 1 ? "not-allowed" : "pointer",
                 }}
@@ -229,7 +214,7 @@ const UsersPage = () => {
                 </button>
               ))}
               <button
-                className={`${styles.btnPaginate} `}
+                className={`${styles.btnPaginate} ${styles.nextpage} `}
                 style={{
                   cursor:
                     currentPage === totalPages ? "not-allowed" : "pointer",
@@ -248,4 +233,4 @@ const UsersPage = () => {
   );
 };
 
-export default UsersPage;
+export default UsersListPage;

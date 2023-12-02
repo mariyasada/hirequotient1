@@ -10,6 +10,13 @@
     display: flex;
     width: 95%;
     justify-content: space-between;
+    .searchWithClear {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: blue;
+      cursor: pointer;
+    }
     input {
       padding: 10px;
       height: 20px;
@@ -18,15 +25,16 @@
       border: 1px solid gray;
       outline: none;
     }
-    .iconcontainer {
+    .deleteRows {
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 15px;
-      background-color: rgb(249, 178, 178);
-      border-radius: 5px;
-      color: white;
+      background-color: rgb(249, 243, 243);
+      border-radius: 20px;
+      color: black;
       cursor: pointer;
+      box-shadow: 5px 5px 10px rgb(221, 219, 219);
     }
   }
   .table {
@@ -41,8 +49,11 @@
       align-items: flex-start;
       justify-content: space-between;
       gap: 20px;
-      padding: 5px;
+      padding: 5px 5px 5px 12px;
       transition: 0.25s ease-in-out;
+      input {
+        cursor: pointer;
+      }
 
       > div {
         text-transform: capitalize;
@@ -52,8 +63,8 @@
         font-size: 0.95rem;
         font-weight: 600;
       }
-      .checkboxdiv {
-        cursor: pointer;
+      .number {
+        width: 90px;
       }
 
       .name {
@@ -85,6 +96,7 @@
     justify-content: space-between;
     .selectedRowInfo {
       color: gray;
+      cursor: pointer;
     }
 
     .paginationNumbers {
@@ -118,3 +130,24 @@
     }
   }
 }
+
+// @media only screen and (max-width: 1000px) {
+//   .container {
+//     width: 100%;
+//     .searchbarcontainer {
+//       width: 80%;
+//       flex-wrap: wrap;
+//       gap: 10px;
+//       input {
+//         width: 100%;
+//       }
+//     }
+//     .table {
+//       width: 81%;
+//       background: white;
+//       .header {
+//         width: 80%;
+//       }
+//     }
+//   }
+// }

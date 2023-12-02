@@ -1,7 +1,7 @@
 export const TABLE_HEADERS = [
   {
-    label: "ID",
-    value: "id",
+    label: "Number",
+    value: "number",
   },
   {
     label: "Name",

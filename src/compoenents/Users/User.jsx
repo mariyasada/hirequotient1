@@ -6,33 +6,31 @@ const User = ({
   user,
   selectedRows,
   handleRowChangeHandler,
-  setOriginalData,
-  setUsersData,
   isEditing,
   setIsEditing,
-  setUserDetail,
-  userDetail,
-  originalData,
-  usersData,
+  singleUser,
+  setSingleUser,
+  setUserList,
+  userList,
+  RowCheckboxChangeHandler,
 }) => {
   const onChangeHandler = (e) => {
     const { name, value } = e.target;
-    setUserDetail((prevData) => ({ ...prevData, [name]: value }));
+    setSingleUser((prevData) => ({ ...prevData, [name]: value }));
   };
 
   useEffect(() => {
     if (isEditing === user.id) {
-      setUserDetail(user);
+      setSingleUser(user);
     }
   }, [isEditing]);
 
   const SaveHandler = () => {
-    const updatedData = usersData?.map((user) =>
-      user.id === userDetail.id ? { ...user, ...userDetail } : user
+    const updatedData = userList?.map((user) =>
+      user.id === singleUser.id ? { ...user, ...singleUser } : user
     );
 
-    setUsersData(updatedData);
-    setOriginalData(updatedData);
+    setUserList(updatedData);
     setIsEditing(null);
   };
 
@@ -43,18 +41,18 @@ const User = ({
           ? `${styles.userCard} ${styles.bggray}`
           : styles.userCard
       }
+      onClick={() => RowCheckboxChangeHandler(user?.id)}
     >
       <input
         type="checkbox"
+        className={styles.checkbox}
         checked={selectedRows.includes(user?.id)}
-        onChange={() => handleRowChangeHandler(user?.id)}
       />
-      <div className={styles.id}>{user?.id}</div>
+      <div className={styles.number}>{user?.id}</div>
       {isEditing === user.id ? (
         <input
           type="text"
-          className={styles.name}
-          value={isEditing ? userDetail.name : user?.name}
+          value={isEditing ? singleUser.name : user?.name}
           name="name"
           onChange={(e) => onChangeHandler(e)}
         />
@@ -66,7 +64,7 @@ const User = ({
         <input
           type="text"
           className={styles.email}
-          value={isEditing ? userDetail.email : user?.email}
+          value={isEditing ? singleUser.email : user?.email}
           name="email"
           onChange={(e) => onChangeHandler(e)}
         />
@@ -78,7 +76,7 @@ const User = ({
         <input
           type="text"
           className={styles.role}
-          value={isEditing ? userDetail.role : user?.role}
+          value={isEditing ? singleUser.role : user?.role}
           name="role"
           onChange={(e) => onChangeHandler(e)}
         />
@@ -89,21 +87,25 @@ const User = ({
       )}
       <div className={styles.actions}>
         <FaEdit
+          size={17}
           className={styles.edit}
           title="edit"
           onClick={() => setIsEditing(user?.id)}
         />
         <FaTrash
+          size={17}
           className={styles.delete}
           title="delete"
           onClick={() => {
-            setOriginalData((prev) =>
-              prev.filter((data) => data.id !== user.id)
-            );
-            setUsersData((prev) => prev.filter((data) => data.id !== user.id));
+            setUserList((prev) => prev.filter((data) => data.id !== user.id));
           }}
         />
-        <FaSave className={styles.save} title="save" onClick={SaveHandler} />
+        <FaSave
+          size={17}
+          className={styles.save}
+          title="save"
+          onClick={SaveHandler}
+        />
       </div>
     </div>
   );

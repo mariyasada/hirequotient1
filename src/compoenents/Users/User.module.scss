@@ -7,6 +7,12 @@
   cursor: pointer;
   border-radius: 10px;
   margin-bottom: 6px;
+  padding: 10px;
+  flex-wrap: wrap;
+  box-shadow: 5px 5px 10px whitesmoke;
+  .checkbox {
+    cursor: pointer;
+  }
   > div {
     color: black;
     font-size: 14px;
@@ -14,6 +20,10 @@
     line-height: 20px;
     text-align: left;
   }
+  .number {
+    width: 80px;
+  }
+
   .name {
     width: 220px;
   }
@@ -35,16 +45,27 @@
     align-items: center;
     margin-left: 10px;
     .edit {
-      color: blue;
+      color: rgb(0, 166, 255);
     }
     .delete {
-      color: red;
+      color: rgb(236, 151, 151);
     }
     .save {
-      color: green;
+      color: rgb(73, 124, 73);
+    }
+  }
+  input {
+    padding: 7px;
+    border-radius: 7px;
+    border: 0.3px solid black;
+    outline: none;
+    &:focus {
+      border: none;
+      outline: 2px solid rgb(76, 153, 235);
     }
   }
 }
 .bggray {
-  background: rgb(228, 225, 225);
+  background: rgb(247, 245, 245);
+  box-shadow: 5px 5px 10px whitesmoke;
 }
